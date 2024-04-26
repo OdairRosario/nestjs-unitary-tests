@@ -1,8 +1,8 @@
-import AtualizarUsuarioDto from '../dtos/atualizar-usuario.dto';
-import CadastrarUsuarioDto from '../dtos/cadastrar-usuario.dto';
 import { Usuario } from '../entidades/usuario.entity';
 
 export interface RepositorioUsuarioInterface {
-  cadastrar(usuarioDto: CadastrarUsuarioDto): Promise<Usuario>;
-  atualizar(id: number, usuarioDto: AtualizarUsuarioDto): Promise<Usuario>;
+  cadastrar(usuario: Usuario): Promise<Usuario>;
+  atualizar(id: number, usuario: Usuario): Promise<boolean>;
+  deletar(id: number): Promise<void>;
+  listarTodos(): Promise<Usuario[]>;
 }

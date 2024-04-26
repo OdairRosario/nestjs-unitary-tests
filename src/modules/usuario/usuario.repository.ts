@@ -1,32 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { RepositorioUsuarioInterface } from './interfaces/repositorio-usuario.interface';
 import { Usuario } from './entidades/usuario.entity';
-import AtualizarUsuarioDto from './dtos/atualizar-usuario.dto';
-import CadastrarUsuarioDto from './dtos/cadastrar-usuario.dto';
+import { Repository } from 'typeorm/repository/Repository';
+import { InjectRepository } from '@nestjs/typeorm/dist/common/typeorm.decorators';
 
 @Injectable()
 export class RepositorioUsuario implements RepositorioUsuarioInterface {
-  public constructor() {}
+  public constructor(
+    @InjectRepository(Usuario)
+    private readonly repositorioUsuario: Repository<Usuario>,
+  ) {}
 
-  async cadastrar(usuarioDto: CadastrarUsuarioDto): Promise<Usuario> {
-    return await this.pegarUsuario(usuarioDto);
+  async cadastrar(usuario: Usuario): Promise<Usuario> {
+    return await this.repositorioUsuario.save(usuario);
   }
 
-  async atualizar(
-    id: number,
-    usuarioDto: AtualizarUsuarioDto,
-  ): Promise<Usuario> {
-    return await this.pegarUsuario(usuarioDto);
+  async atualizar(id: number, usuario: Usuario): Promise<boolean> {
+    const resultado = await this.repositorioUsuario.update(id, usuario);
+
+    return Boolean(resultado.affected);
   }
 
-  private readonly pegarUsuario = async ({
-    nome,
-    email,
-  }: AtualizarUsuarioDto | CadastrarUsuarioDto) => {
-    return Promise.resolve({
-      id: 6926,
-      nome,
-      email,
-    });
-  };
+  async deletar(id: number): Promise<void> {
+    await this.repositorioUsuario.delete(id);
+  }
+
+  async listarTodos(): Promise<Usuario[]> {
+    return await this.repositorioUsuario.find();
+  }
 }
