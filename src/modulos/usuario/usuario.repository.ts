@@ -15,17 +15,7 @@ export class RepositorioUsuario implements RepositorioUsuarioInterface {
     return await this.repositorioUsuario.save(usuario);
   }
 
-  // async atualizar(id: number, usuario: Usuario): Promise<boolean> {
-  //   const resultado = await this.repositorioUsuario.update(id, usuario);
-
-  //   return Boolean(resultado.affected);
-  // }
-
-  // async deletar(id: number): Promise<void> {
-  //   await this.repositorioUsuario.delete(id);
-  // }
-
-  // async listarTodos(): Promise<Usuario[]> {
-  //   return await this.repositorioUsuario.find();
-  // }
+  async atualizar(id: number, usuario: Usuario): Promise<Usuario> {
+    return await this.repositorioUsuario.save(usuario);
+  }
 }

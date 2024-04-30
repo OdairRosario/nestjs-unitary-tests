@@ -5,8 +5,5 @@ import { Usuario } from '../entidades/usuario.entity';
 export interface MapeadorUsuarioInterface {
   mapearDtoCadastrar(usuarioDto: CadastrarUsuarioDto): Usuario;
 
-  mapearDtoAtualizar(
-    usuario: Usuario,
-    usuarioDto: AtualizarUsuarioDto,
-  ): Usuario;
+  mapearDtoAtualizar(id: number, usuarioDto: AtualizarUsuarioDto): Usuario;
 }

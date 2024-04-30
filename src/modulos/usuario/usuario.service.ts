@@ -1,62 +1,40 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ServicoUsuarioInterface } from './interfaces/servico-usuario.interface';
 import CadastrarUsuarioDto from './dtos/cadastrar-usuario.dto';
 import { Usuario } from './entidades/usuario.entity';
 import { RepositorioUsuarioInterface } from './interfaces/repositorio-usuario.interface';
 import { MapeadorUsuarioInterface } from './interfaces/mapeador-usuario.interface';
 import { ValidadorUsuario } from './validadores/usuario.validator';
+import AtualizarUsuarioDto from './dtos/atualizar-usuario.dto';
 
 @Injectable()
 export class ServicoUsuario implements ServicoUsuarioInterface {
   public constructor(
     @Inject('RepositorioUsuarioInterface')
     private readonly repositorioUsuario: RepositorioUsuarioInterface,
-    @Inject('MapperUsuarioInterface')
-    private readonly usuarioMapper: MapeadorUsuarioInterface,
+    @Inject('MapeadorUsuarioInterface')
+    private readonly mapeadorUsuario: MapeadorUsuarioInterface,
 
-    @Inject(ValidadorUsuario)
+    @Inject('ValidadorUsuario')
     private readonly validadorUsuario: ValidadorUsuario,
   ) {}
 
   async cadastrar(usuarioDto: CadastrarUsuarioDto): Promise<Usuario> {
-    const usuario = this.usuarioMapper.mapearDtoCadastrar(usuarioDto);
+    const usuario = this.mapeadorUsuario.mapearDtoCadastrar(usuarioDto);
 
-    const emailEhDuplicado = this.validadorUsuario.verificarDuplicidadeEmail(
-      usuario.email,
-    );
-
-    if (emailEhDuplicado) {
-      throw new BadRequestException(
-        'Já existe um usuario adastrado com este email',
-      );
-    }
+    await this.validadorUsuario.validar(usuario);
 
     return await this.repositorioUsuario.cadastrar(usuario);
   }
 
-  // async atualizar(
-  //   id: number,
-  //   usuarioDto: AtualizarUsuarioDto,
-  // ): Promise<Usuario> {
-  //   // const usuarioAntigo = await this.repositorioUsuario.listarTodos()[0];
+  async atualizar(
+    id: number,
+    usuarioDto: AtualizarUsuarioDto,
+  ): Promise<Usuario> {
+    const usuario = this.mapeadorUsuario.mapearDtoAtualizar(id, usuarioDto);
 
-  //   const usuario = new Usuario();
+    await this.validadorUsuario.validar(usuario);
 
-  //   usuario.nome = usuarioDto.nome;
-  //   usuario.email = usuarioDto.email;
-
-  //   await this.repositorioUsuario.atualizar(id, usuario);
-
-  //   const usuarioAtualizado = await this.repositorioUsuario.listarTodos()[0];
-
-  //   return usuarioAtualizado;
-  // }
-
-  // async deletar(id: number): Promise<void> {
-  //   return this.repositorioUsuario.deletar(id);
-  // }
-
-  // async listarTodos(): Promise<Usuario[]> {
-  //   return this.repositorioUsuario.listarTodos();
-  // }
+    return await this.repositorioUsuario.atualizar(id, usuario);
+  }
 }

@@ -1,6 +1,7 @@
 import { MapeadorUsuario } from './mapeadores/usuario.mapper';
 import { RepositorioUsuario } from './usuario.repository';
 import { ServicoUsuario } from './usuario.service';
+import { ValidadorUsuario } from './validadores/usuario.validator';
 
 const providers = [
   {
@@ -16,6 +17,11 @@ const providers = [
   {
     provide: 'MapeadorUsuarioInterface',
     useClass: MapeadorUsuario,
+    shouldExport: true,
+  },
+  {
+    provide: 'ValidadorUsuario',
+    useClass: ValidadorUsuario,
     shouldExport: true,
   },
 ];

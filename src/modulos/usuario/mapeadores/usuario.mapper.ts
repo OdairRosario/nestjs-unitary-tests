@@ -16,12 +16,18 @@ export class MapeadorUsuario implements MapeadorUsuarioInterface {
   }
 
   public mapearDtoAtualizar(
-    usuario: Usuario,
+    id: number,
     usuarioDto: AtualizarUsuarioDto,
   ): Usuario {
-    usuario.nome = usuarioDto.nome;
-    usuario.email = usuarioDto.email;
+    const usuario = new Usuario();
 
+    usuario.nome =
+      usuario.nome !== usuarioDto.nome ? usuarioDto.nome : usuario.nome;
+
+    usuario.email =
+      usuario.email !== usuarioDto.email ? usuarioDto.email : usuario.email;
+
+    usuario.id = id;
     return usuario;
   }
 }
