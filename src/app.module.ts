@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
-import { UsuarioModule } from './modules/usuario/usuario.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { dataSourceOptions } from 'data-source';
+import { UsuarioModule } from './modulos/usuario/usuario.module';
 
 @Module({
-  imports: [UsuarioModule],
+  imports: [TypeOrmModule.forRoot(dataSourceOptions), UsuarioModule],
   controllers: [],
   providers: [],
 })

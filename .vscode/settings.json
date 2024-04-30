@@ -1,5 +1,3 @@
 {
-    "conventionalCommits.scopes": [
-        "controller"
-    ]
+  "conventionalCommits.scopes": ["controller", "testes"]
 }

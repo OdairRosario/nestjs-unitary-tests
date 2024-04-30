@@ -1,6 +1,5 @@
-import { Controller, Inject, Post, Put } from '@nestjs/common';
+import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ServicoUsuarioInterface } from './interfaces/servico-usuario.interface';
-import AtualizarUsuarioDto from './dtos/atualizar-usuario.dto';
 import CadastrarUsuarioDto from './dtos/cadastrar-usuario.dto';
 import { Usuario } from './entidades/usuario.entity';
 import { ApiTags } from '@nestjs/swagger/dist/decorators';
@@ -14,15 +13,15 @@ export class ControllerUsuario {
   ) {}
 
   @Post()
-  async cadastrar(usuarioDto: CadastrarUsuarioDto): Promise<Usuario> {
+  async cadastrar(@Body() usuarioDto: CadastrarUsuarioDto): Promise<Usuario> {
     return await this.servicoUsuario.cadastrar(usuarioDto);
   }
 
-  @Put()
-  async atualizar(
-    id: number,
-    usuarioDto: AtualizarUsuarioDto,
-  ): Promise<Usuario> {
-    return await this.servicoUsuario.atualizar(id, usuarioDto);
-  }
+  // @Put()
+  // async atualizar(
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @Body() usuarioDto: AtualizarUsuarioDto,
+  // ): Promise<Usuario> {
+  //   return await this.servicoUsuario.atualizar(id, usuarioDto);
+  // }
 }
