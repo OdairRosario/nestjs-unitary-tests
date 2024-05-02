@@ -1,43 +1,17 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOneOptions, Not } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
 import { Usuario } from '../entidades/usuario.entity';
+import { RepositorioUsuarioInterface } from '../interfaces/repositorio-usuario.interface';
+import { ValidadorUsuarioInterface } from '../interfaces/validador-usuario.interface';
 
 @Injectable()
-export class ValidadorUsuario {
+export class ValidadorUsuario implements ValidadorUsuarioInterface {
   constructor(
-    @InjectRepository(Usuario)
-    private usuarioRepository: Repository<Usuario>,
+    @Inject('RepositorioUsuarioInterface')
+    private readonly repositorioUsuario: RepositorioUsuarioInterface,
   ) {}
 
-  public async validar(usuario: Usuario) {
-    const emailEhDuplicado = await this.verificarDuplicidadeEmail(
-      usuario.email,
-      usuario.id,
-    );
-
-    if (emailEhDuplicado) {
-      throw new BadRequestException(
-        'Já existe um usuario adastrado com este email',
-      );
-    }
-  }
-
-  private async verificarDuplicidadeEmail(
-    email: string,
-    idUsuario?: number,
-  ): Promise<boolean> {
-    const filtro: FindOneOptions<Usuario> = {
-      where: {
-        email: email,
-      },
-    };
-
-    if (idUsuario) {
-      filtro.where['id'] = Not(idUsuario);
-    }
-
-    const usuario = await this.usuarioRepository.findOne(filtro);
-    return !!usuario;
+  public async verificaDuplicidadeEmail({ email }: Usuario): Promise<boolean> {
+    const usuario = await this.repositorioUsuario.buscarPorEmail(email);
+    return Boolean(usuario);
   }
 }

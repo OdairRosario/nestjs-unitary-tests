@@ -20,7 +20,7 @@ const providers = [
     shouldExport: true,
   },
   {
-    provide: 'ValidadorUsuario',
+    provide: 'ValidadorUsuarioInterface',
     useClass: ValidadorUsuario,
     shouldExport: true,
   },

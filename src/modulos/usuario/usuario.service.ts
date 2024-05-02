@@ -1,11 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ServicoUsuarioInterface } from './interfaces/servico-usuario.interface';
 import CadastrarUsuarioDto from './dtos/cadastrar-usuario.dto';
 import { Usuario } from './entidades/usuario.entity';
 import { RepositorioUsuarioInterface } from './interfaces/repositorio-usuario.interface';
 import { MapeadorUsuarioInterface } from './interfaces/mapeador-usuario.interface';
-import { ValidadorUsuario } from './validadores/usuario.validator';
-import AtualizarUsuarioDto from './dtos/atualizar-usuario.dto';
+import { ValidadorUsuarioInterface } from './interfaces/validador-usuario.interface';
 
 @Injectable()
 export class ServicoUsuario implements ServicoUsuarioInterface {
@@ -14,27 +13,24 @@ export class ServicoUsuario implements ServicoUsuarioInterface {
     private readonly repositorioUsuario: RepositorioUsuarioInterface,
     @Inject('MapeadorUsuarioInterface')
     private readonly mapeadorUsuario: MapeadorUsuarioInterface,
-
-    @Inject('ValidadorUsuario')
-    private readonly validadorUsuario: ValidadorUsuario,
+    @Inject('ValidadorUsuarioInterface')
+    private readonly validadorUsuario: ValidadorUsuarioInterface,
   ) {}
 
   async cadastrar(usuarioDto: CadastrarUsuarioDto): Promise<Usuario> {
     const usuario = this.mapeadorUsuario.mapearDtoCadastrar(usuarioDto);
 
-    await this.validadorUsuario.validar(usuario);
+    const emailEhDuplicado =
+      await this.validadorUsuario.verificaDuplicidadeEmail(usuario);
 
-    return await this.repositorioUsuario.cadastrar(usuario);
-  }
+    console.log(emailEhDuplicado);
 
-  async atualizar(
-    id: number,
-    usuarioDto: AtualizarUsuarioDto,
-  ): Promise<Usuario> {
-    const usuario = this.mapeadorUsuario.mapearDtoAtualizar(id, usuarioDto);
+    if (emailEhDuplicado) {
+      throw new BadRequestException(
+        'Já existe um usuário cadastrado com este e-mail',
+      );
+    }
 
-    await this.validadorUsuario.validar(usuario);
-
-    return await this.repositorioUsuario.atualizar(id, usuario);
+    return this.repositorioUsuario.cadastrar(usuario);
   }
 }
