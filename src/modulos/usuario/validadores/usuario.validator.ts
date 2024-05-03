@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Usuario } from '../entidades/usuario.entity';
 import { RepositorioUsuarioInterface } from '../interfaces/repositorio-usuario.interface';
 import { ValidadorUsuarioInterface } from '../interfaces/validador-usuario.interface';
 
@@ -10,7 +9,7 @@ export class ValidadorUsuario implements ValidadorUsuarioInterface {
     private readonly repositorioUsuario: RepositorioUsuarioInterface,
   ) {}
 
-  public async verificaDuplicidadeEmail({ email }: Usuario): Promise<boolean> {
+  public async verificaDuplicidadeEmail(email: string): Promise<boolean> {
     const usuario = await this.repositorioUsuario.buscarPorEmail(email);
     return Boolean(usuario);
   }

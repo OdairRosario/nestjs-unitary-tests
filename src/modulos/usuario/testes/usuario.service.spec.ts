@@ -11,7 +11,7 @@ import { BadRequestException } from '@nestjs/common';
 describe('Testes Serviço Usuario', () => {
   let servico: ServicoUsuarioInterface;
   let mockRepositorioUsuario: jest.Mocked<RepositorioUsuarioInterface>;
-  let mockUsuarioValidador: jest.Mocked<ValidadorUsuarioInterface>;
+  let mockValidadorUsuario: jest.Mocked<ValidadorUsuarioInterface>;
   let mockMapeadorUsuario: jest.Mocked<MapeadorUsuarioInterface>;
 
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('Testes Serviço Usuario', () => {
 
     servico = unit;
     mockRepositorioUsuario = unitRef.get('RepositorioUsuarioInterface');
-    mockUsuarioValidador = unitRef.get('ValidadorUsuarioInterface');
+    mockValidadorUsuario = unitRef.get('ValidadorUsuarioInterface');
     mockMapeadorUsuario = unitRef.get('MapeadorUsuarioInterface');
   });
 
@@ -27,18 +27,18 @@ describe('Testes Serviço Usuario', () => {
     it('Deveria cadastrar um novo usuário e retorna-lo', async () => {
       // Arrange
       const usuarioDto: CadastrarUsuarioDto = {
-        nome: 'Odair Rosario',
-        email: 'odair@rosario.com',
+        nome: 'Teste',
+        email: 'teste@nexen.com',
       };
 
       const mockUsuario: Usuario = {
         id: 1,
-        nome: 'Odair Rosario',
-        email: 'odair@rosario.com',
+        nome: 'Teste',
+        email: 'teste@nexen.com',
       };
 
       mockMapeadorUsuario.mapearDtoCadastrar.mockReturnValue(mockUsuario);
-      mockUsuarioValidador.verificaDuplicidadeEmail.mockResolvedValue(false);
+      mockValidadorUsuario.verificaDuplicidadeEmail.mockResolvedValue(false);
       mockRepositorioUsuario.cadastrar.mockResolvedValue(mockUsuario);
 
       // Act
@@ -47,32 +47,34 @@ describe('Testes Serviço Usuario', () => {
       // Assert
       expect(resultado).toEqual(mockUsuario);
       expect(mockRepositorioUsuario.cadastrar).toHaveBeenCalled();
-      expect(mockUsuarioValidador.verificaDuplicidadeEmail).toHaveBeenCalled();
+      expect(mockValidadorUsuario.verificaDuplicidadeEmail).toHaveBeenCalled();
       expect(mockMapeadorUsuario.mapearDtoCadastrar).toHaveBeenCalled();
     });
 
-    it('Deveria retornar mensagem de erro indicando duplicidade de e-mail', async () => {
+    it('Deveria gerar erro indicando duplicidade de e-mail', async () => {
       // Arrange
       const usuarioDto: CadastrarUsuarioDto = {
-        nome: 'Odair Rosario',
-        email: 'odair@rosario.com',
+        nome: 'Teste',
+        email: 'teste@nexen.com',
       };
 
       const mockUsuario: Usuario = {
         id: 1,
-        nome: 'Odair Rosario',
-        email: 'odair@rosario.com',
+        nome: 'Teste',
+        email: 'teste@nexen.com',
       };
 
+      const mensagemErro = 'Já existe um usuário cadastrado com este e-mail';
+
       mockMapeadorUsuario.mapearDtoCadastrar.mockReturnValue(mockUsuario);
-      mockUsuarioValidador.verificaDuplicidadeEmail.mockResolvedValue(true);
+      mockValidadorUsuario.verificaDuplicidadeEmail.mockResolvedValue(true);
 
       // Act
       const resultado = servico.cadastrar(usuarioDto);
 
       // Assert
-      expect(resultado).rejects.toThrow(BadRequestException);
-      expect(mockUsuarioValidador.verificaDuplicidadeEmail).toHaveBeenCalled();
+      expect(resultado).rejects.toThrow(new BadRequestException(mensagemErro));
+      expect(mockValidadorUsuario.verificaDuplicidadeEmail).toHaveBeenCalled();
       expect(mockMapeadorUsuario.mapearDtoCadastrar).toHaveBeenCalled();
     });
   });

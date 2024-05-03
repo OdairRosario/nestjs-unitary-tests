@@ -21,9 +21,7 @@ export class ServicoUsuario implements ServicoUsuarioInterface {
     const usuario = this.mapeadorUsuario.mapearDtoCadastrar(usuarioDto);
 
     const emailEhDuplicado =
-      await this.validadorUsuario.verificaDuplicidadeEmail(usuario);
-
-    console.log(emailEhDuplicado);
+      await this.validadorUsuario.verificaDuplicidadeEmail(usuario.email);
 
     if (emailEhDuplicado) {
       throw new BadRequestException(

@@ -1,3 +1,7 @@
 {
-  "conventionalCommits.scopes": ["controller", "testes"]
+  "conventionalCommits.scopes": [
+    "controller",
+    "testes"
+  ],
+  "editor.tabSize": 2
 }

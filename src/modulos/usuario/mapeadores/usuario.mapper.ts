@@ -9,6 +9,7 @@ export class MapeadorUsuario implements MapeadorUsuarioInterface {
     const usuario = new Usuario();
     usuario.nome = usuarioDto.nome;
     usuario.email = usuarioDto.email;
+
     return usuario;
   }
 }

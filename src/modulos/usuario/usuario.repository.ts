@@ -16,10 +16,6 @@ export class RepositorioUsuario implements RepositorioUsuarioInterface {
     return await this.repositorioUsuario.save(usuario);
   }
 
-  async atualizar(id: number, usuario: Usuario): Promise<Usuario> {
-    return await this.repositorioUsuario.save(usuario);
-  }
-
   async buscarPorEmail(email: string): Promise<Usuario> {
     const filtro: FindOneOptions<Usuario> = {
       where: {

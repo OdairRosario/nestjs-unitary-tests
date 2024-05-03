@@ -10,6 +10,7 @@ async function bootstrap() {
     .setDescription('The nestjs-unitary-tests API description')
     .setVersion('1.0')
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('', app, document);
 
